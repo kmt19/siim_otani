@@ -2,28 +2,30 @@ from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import os
 import torch
+import pandas as pd
+from skimage import io
 
 class SIIMDataset(Dataset):
     """
-    module to load dataset
-    Some requirements:
-    - path to the data should be described in csv file
-    - path represents the image label like `/class1/img1.png`
+    args:
+    - phase    : phase of the dataset used (∈{"train", "test"})
+    - transform:  
     """
-    def __init__(self, csv_file, root_dir, transform=None):
-        self.img_paths = pd.read_csv(csv_file, sep = ',')
+    def __init__(self, root_dir, phase, transform=None):
+        self.phase = phase
         self.root_dir = root_dir
+        self.cols = 2 if phase == "train" else 1
+        self.table = pd.read_csv(f"{root_dir}/{phase}.csv", usecols = [i for i in range(self.cols)])
         self.transform = transform
 
     def __len__(self):
-        return len(self.img_paths)
+        return len(self.table)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.root_dir,
-                                self.img_paths.iloc[idx, 0])
+        img_path = os.path.join(self.root_dir + f"/dicom_images_{self.phase}",
+                                self.table["ImageId"][idx])
         image = io.imread(img_path)
-        match = re.findall('dataset/(.*)/', img_path)
-        label = labels.index(match[0])
+        label = self.table["EncodedPixels"][idx] if self.phase == "train" else None
 
         image = Image.fromarray(image)
         image = image.convert("RGB")
