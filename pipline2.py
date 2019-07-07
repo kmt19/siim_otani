@@ -37,7 +37,7 @@ class SIIMDataset(Dataset):
         sample = {'image':image, 'label':label}
         return sample
 
- def get_dataloaders(data,batch_size=8, study_level=False):
+def get_dataloaders(data, batch_size=8, study_level=False):
     '''
     Returns dataloader pipeline with data augmentation
     '''
