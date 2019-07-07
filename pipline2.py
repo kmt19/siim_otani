@@ -5,6 +5,7 @@ import torch
 from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
 from torchvision.datasets.folder import pil_loader
+import pydicom
 
 class SIIMDataset(Dataset):
     """
@@ -24,9 +25,10 @@ class SIIMDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path = self.df.loc[idx][0]
-        image = pil_loader(img_path)
+        image = pydicom.read_file(img_path).pixel_array
+        image = Image.fromarray(image)
         label = self.df.loc[idx][1] if self.phase == "train" else None
-        #image = Image.fromarray(image)
+        
         #image = image.convert("RGB")
 
         if self.transform:
