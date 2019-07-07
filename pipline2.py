@@ -6,6 +6,7 @@ from torchvision import transforms
 from torch.utils.data import DataLoader, Dataset
 from torchvision.datasets.folder import pil_loader
 import pydicom
+from PIL import Image
 
 class SIIMDataset(Dataset):
     """
