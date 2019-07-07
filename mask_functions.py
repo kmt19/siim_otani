@@ -40,3 +40,14 @@ def rle2mask(rle, width, height):
         current_position += lengths[index]
 
     return mask.reshape(width, height)
+
+def load_mask(self, (height,width),annotations):
+    count = len(annotations)
+    if count == 0 or (count == 1 and annotations[0] == -1): # empty annotation
+        mask = np.zeros((height, weight, 1), dtype=np.uint8)
+        class_ids = np.zeros((1,), dtype=np.int32)
+    else:
+        mask = np.zeros((height, width, count), dtype=np.uint8)
+        class_ids = np.zeros((1,), dtype=np.int32)
+        mask[:, :, i] = rle2mask(annotations, height, width).T
+    return mask.astype(np.bool), class_ids.astype(np.int32)
